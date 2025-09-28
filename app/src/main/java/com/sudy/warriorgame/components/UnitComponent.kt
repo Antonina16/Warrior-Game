@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -23,64 +24,114 @@ import com.sudy.warriorgame.ui.theme.primaryContainerLight
 import com.sudy.warriorgame.ui.theme.surfaceContainerLight
 import com.sudy.warriorgame.warriors.configs.Props
 
-
 enum class UnitType { Warrior, Knight, Rookie, Lancer, Vampire, Defender, Healer }
 
 
-data class UnitStats(
+enum class StatType { Health, Attack, Defense, Vampirism, Heal }
+
+data class StatItem(
+    val type: StatType,
+    val value: Int,
+)
+
+data class UnitMeta(
     val title: String,
-    val health: Int,
-    val attack: Int,
-    val extras: List<Pair<String, Int>> = emptyList(), // [("Vampirism",50), ...]
-    val backgroundRes: Int
+    val iconRes: Int,
+    val backgroundRes: Int,
+    val description: String = ""
+)
+
+fun unitMetaOf(type: UnitType): UnitMeta = when (type) {
+    UnitType.Warrior -> UnitMeta(
+        title = "Warrior",
+        iconRes = R.drawable.ic_launcher_foreground,
+        backgroundRes = R.drawable.ic_launcher_foreground
+    )
+
+    UnitType.Knight -> UnitMeta(
+        title = "Knight",
+        iconRes = R.drawable.ic_launcher_foreground,
+        backgroundRes = R.drawable.ic_launcher_foreground
+    )
+
+    UnitType.Rookie -> UnitMeta(
+        title = "Rookie",
+        iconRes = R.drawable.ic_launcher_foreground,
+        backgroundRes = R.drawable.ic_launcher_foreground
+    )
+
+    UnitType.Lancer -> UnitMeta(
+        title = "Lancer",
+        iconRes = R.drawable.ic_launcher_foreground,
+        backgroundRes = R.drawable.ic_launcher_foreground
+    )
+
+    UnitType.Vampire -> UnitMeta(
+        title = "Vampire",
+        iconRes = R.drawable.ic_launcher_foreground,
+        backgroundRes = R.drawable.ic_launcher_foreground
+    )
+
+    UnitType.Defender -> UnitMeta(
+        title = "Defender",
+        iconRes = R.drawable.ic_launcher_foreground,
+        backgroundRes = R.drawable.ic_launcher_foreground
+    )
+
+    UnitType.Healer -> UnitMeta(
+        title = "Healer",
+        iconRes = R.drawable.ic_launcher_foreground,
+        backgroundRes = R.drawable.ic_launcher_foreground
+    )
+}
+
+
+val StatIcon = mapOf(
+    StatType.Health to R.drawable.ic_stat_health,
+    StatType.Attack to R.drawable.ic_stat_attack,
+    StatType.Defense to R.drawable.ic_stat_defense,
+    StatType.Vampirism to R.drawable.ic_stat_vampirism,
+    StatType.Heal to R.drawable.ic_stat_heal
 )
 
 
-fun unitStatsOf(type: UnitType): UnitStats = when (type) {
-    UnitType.Warrior -> UnitStats(
-        title = "Warrior",
-        health = Props.Warrior.HEALTH,
-        attack = Props.Warrior.ATTACK,
-        backgroundRes = R.drawable.ic_launcher_foreground
+fun statsFor(type: UnitType): List<StatItem> = when (type) {
+    UnitType.Warrior -> listOf(
+        StatItem(StatType.Health, Props.Warrior.HEALTH),
+        StatItem(StatType.Attack, Props.Warrior.ATTACK)
     )
-    UnitType.Knight -> UnitStats(
-        title = "Knight",
-        health = Props.Knight.HEALTH,
-        attack = Props.Knight.ATTACK,
-        backgroundRes = R.drawable.ic_launcher_foreground
+
+    UnitType.Knight -> listOf(
+        StatItem(StatType.Health, Props.Knight.HEALTH),
+        StatItem(StatType.Attack, Props.Knight.ATTACK)
     )
-    UnitType.Rookie -> UnitStats(
-        title = "Rookie",
-        health = Props.Rookie.HEALTH,
-        attack = Props.Rookie.ATTACK,
-        backgroundRes = R.drawable.ic_launcher_foreground
+
+    UnitType.Rookie -> listOf(
+        StatItem(StatType.Health, Props.Rookie.HEALTH),
+        StatItem(StatType.Attack, Props.Rookie.ATTACK)
     )
-    UnitType.Lancer -> UnitStats(
-        title = "Lancer",
-        health = Props.Lancer.HEALTH,
-        attack = Props.Lancer.ATTACK,
-        backgroundRes = R.drawable.ic_launcher_foreground
+
+    UnitType.Lancer -> listOf(
+        StatItem(StatType.Health, Props.Lancer.HEALTH),
+        StatItem(StatType.Attack, Props.Lancer.ATTACK)
     )
-    UnitType.Vampire -> UnitStats(
-        title = "Vampire",
-        health = Props.Vampire.HEALTH,
-        attack = Props.Vampire.ATTACK,
-        extras = listOf("Vampirism" to Props.Vampire.VAMPIRISM),
-        backgroundRes = R.drawable.ic_launcher_foreground
+
+    UnitType.Vampire -> listOf(
+        StatItem(StatType.Health, Props.Vampire.HEALTH),
+        StatItem(StatType.Attack, Props.Vampire.ATTACK),
+        StatItem(StatType.Vampirism, Props.Vampire.VAMPIRISM)
     )
-    UnitType.Defender -> UnitStats(
-        title = "Defender",
-        health = Props.Defender.HEALTH,
-        attack = Props.Defender.ATTACK,
-        extras = listOf("Defense" to Props.Defender.DEFENSE),
-        backgroundRes = R.drawable.ic_launcher_foreground
+
+    UnitType.Defender -> listOf(
+        StatItem(StatType.Health, Props.Defender.HEALTH),
+        StatItem(StatType.Attack, Props.Defender.ATTACK),
+        StatItem(StatType.Defense, Props.Defender.DEFENSE)
     )
-    UnitType.Healer -> UnitStats(
-        title = "Healer",
-        health = Props.Healer.HEALTH,
-        attack = Props.Healer.ATTACK,
-        extras = listOf("Heal" to Props.Healer.HEAL),
-        backgroundRes = R.drawable.ic_launcher_foreground
+
+    UnitType.Healer -> listOf(
+        StatItem(StatType.Health, Props.Healer.HEALTH),
+        StatItem(StatType.Attack, Props.Healer.ATTACK),
+        StatItem(StatType.Heal, Props.Healer.HEAL)
     )
 }
 
@@ -92,13 +143,7 @@ fun UnitCard(
         .width(220.dp)
         .height(320.dp)
 ) {
-    val stats = unitStatsOf(type)
-
-    val allStats = remember(stats) {
-        listOf("Health" to stats.health, "Attack" to stats.attack) + stats.extras
-    }
-
-
+    val meta = unitMetaOf(type)
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(24.dp),
@@ -109,7 +154,7 @@ fun UnitCard(
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Image(
-                painter = painterResource(stats.backgroundRes),
+                painter = painterResource(meta.backgroundRes),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -124,7 +169,7 @@ fun UnitCard(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = stats.title,
+                    text = meta.title,
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold
@@ -133,56 +178,63 @@ fun UnitCard(
                     overflow = TextOverflow.Ellipsis
                 )
 
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    items(
-                        items = allStats,
-                        key = { it.first }
-                    ) { (name, value) ->
-                        StatChip(label = name, value = value)
-                    }
-                }
+                UnitStatsRow(type)
 
-//                Row(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    horizontalArrangement = Arrangement.End,
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    // Например, редкая рамка/иконка уровня и т.п.
-//                }
             }
         }
     }
 }
 
-// Chip for displaying a stat
+
 @Composable
 private fun StatChip(
-    label: String,
-    value: Int,
+    item: StatItem,
     modifier: Modifier = Modifier
 ) {
+
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.tertiaryContainer
+        color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.1f),
     ) {
         Row(
-            modifier = Modifier
-                .padding(horizontal = 10.dp, vertical = 8.dp),
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold)
+            Icon(
+                painter = painterResource(StatIcon[item.type]!!),
+                contentDescription = item.type.name,
+                tint = Color.Unspecified,
+                modifier = Modifier.size(42.dp)
             )
             Spacer(Modifier.width(8.dp))
             Text(
-                text = value.toString(),
+                text = item.type.name, // Health / Attack / ...
                 style = MaterialTheme.typography.labelLarge
+            )
+            Spacer(Modifier.width(6.dp))
+            Text(
+                text = item.value.toString(),
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
             )
         }
     }
 }
+
+@Composable
+private fun UnitStatsRow(
+    type: UnitType,
+) {
+    val all = statsFor(type)
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        items(all) { it ->
+            StatChip(
+                item = it,
+            )
+        }
+    }
+}
+

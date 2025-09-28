@@ -1,0 +1,118 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- мягкая тень как в шаблоне Android Studio -->
+    <path android:pathData="M31,63.928c0,0 6.4,-11 12.1,-13.1c7.2,-2.6 26,-1.4 26,-1.4l38.1,38.1L107,108.928l-32,-1L31,63.928z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear"
+                android:startX="42.9492" android:startY="49.59793"
+                android:endX="85.84757" android:endY="92.4963">
+                <item android:offset="0" android:color="#44000000"/>
+                <item android:offset="1" android:color="#00000000"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- МЕЧ №1 (левый): повёрнут на -45° -->
+    <group
+        android:pivotX="54"
+        android:pivotY="54"
+        android:rotation="-45">
+
+        <!-- клинок -->
+        <path android:pathData="M52,18 L56,18 L60,60 L48,60 Z" android:fillType="nonZero">
+            <aapt:attr name="android:fillColor">
+                <gradient android:type="linear"
+                    android:startX="48" android:startY="18"
+                    android:endX="60" android:endY="60">
+                    <item android:offset="0" android:color="#FFF3F4F6"/>
+                    <item android:offset="0.5" android:color="#FFE5E7EB"/>
+                    <item android:offset="1" android:color="#FFCBD5E1"/>
+                </gradient>
+            </aapt:attr>
+        </path>
+
+        <!-- фаска клинка -->
+        <path android:pathData="M52,18 L56,18 L54,10 Z" android:fillColor="#FFFFFFFF" android:fillAlpha="0.6"/>
+
+        <!-- перекрестье (гарда) -->
+        <path android:pathData="M44,60 h24 v6 h-24 z">
+            <aapt:attr name="android:fillColor">
+                <gradient android:type="linear"
+                    android:startX="44" android:startY="60"
+                    android:endX="68" android:endY="66">
+                    <item android:offset="0" android:color="#FFFFB86B"/>
+                    <item android:offset="1" android:color="#FFEE7A22"/>
+                </gradient>
+            </aapt:attr>
+        </path>
+
+        <!-- рукоять -->
+        <path android:pathData="M52,66 h4 v16 h-4 z"
+            android:fillColor="#FF7C3B1E"/>
+
+        <!-- яблоко рукояти -->
+        <path android:pathData="M50,82 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0"
+            android:fillColor="#FFDEB887" android:strokeColor="#26000000" android:strokeWidth="1"/>
+
+        <!-- лёгкий контур -->
+        <path android:pathData="M52,18 L56,18 L60,60 L48,60 Z"
+            android:fillColor="#00000000" android:strokeColor="#20000000" android:strokeWidth="1.2"/>
+    </group>
+
+    <!-- МЕЧ №2 (правый): повёрнут на +45° и зеркально расставлен -->
+    <group
+        android:pivotX="54"
+        android:pivotY="54"
+        android:rotation="45">
+
+        <!-- клинок -->
+        <path android:pathData="M52,18 L56,18 L60,60 L48,60 Z" android:fillType="nonZero">
+            <aapt:attr name="android:fillColor">
+                <gradient android:type="linear"
+                    android:startX="48" android:startY="18"
+                    android:endX="60" android:endY="60">
+                    <item android:offset="0" android:color="#FFEFF6FF"/>
+                    <item android:offset="0.5" android:color="#FFDCEBFF"/>
+                    <item android:offset="1" android:color="#FFB6C6E3"/>
+                </gradient>
+            </aapt:attr>
+        </path>
+
+        <!-- фаска клинка -->
+        <path android:pathData="M52,18 L56,18 L54,10 Z" android:fillColor="#FFFFFFFF" android:fillAlpha="0.6"/>
+
+        <!-- перекрестье (гарда) -->
+        <path android:pathData="M44,60 h24 v6 h-24 z">
+            <aapt:attr name="android:fillColor">
+                <gradient android:type="linear"
+                    android:startX="44" android:startY="60"
+                    android:endX="68" android:endY="66">
+                    <item android:offset="0" android:color="#FFFFC56D"/>
+                    <item android:offset="1" android:color="#FFF08A2A"/>
+                </gradient>
+            </aapt:attr>
+        </path>
+
+        <!-- рукоять -->
+        <path android:pathData="M52,66 h4 v16 h-4 z"
+            android:fillColor="#FF7C3B1E"/>
+
+        <!-- яблоко рукояти -->
+        <path android:pathData="M50,82 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0"
+            android:fillColor="#FFDEB887" android:strokeColor="#26000000" android:strokeWidth="1"/>
+
+        <!-- лёгкий контур -->
+        <path android:pathData="M52,18 L56,18 L60,60 L48,60 Z"
+            android:fillColor="#00000000" android:strokeColor="#20000000" android:strokeWidth="1.2"/>
+    </group>
+
+    <!-- бликовая искра в месте скрещивания -->
+    <path
+        android:pathData="M50,54 l4,-2 l2,-4 l2,4 l4,2 l-4,2 l-2,4 l-2,-4 z"
+        android:fillColor="#FFFFFFFF" android:fillAlpha="0.6"/>
+</vector>

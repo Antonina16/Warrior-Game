@@ -26,5 +26,4 @@ fun ResponsiveLayoutPreview() {
 @Composable
 fun UnitCardPreview() {
     UnitCard(UnitType.Warrior)
-
 }
