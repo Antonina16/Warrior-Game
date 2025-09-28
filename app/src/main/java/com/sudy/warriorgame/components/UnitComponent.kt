@@ -2,12 +2,15 @@ package com.sudy.warriorgame.components
 
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +26,10 @@ import com.sudy.warriorgame.R
 import com.sudy.warriorgame.ui.theme.primaryContainerLight
 import com.sudy.warriorgame.ui.theme.surfaceContainerLight
 import com.sudy.warriorgame.warriors.configs.Props
+import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Brush
+import com.sudy.warriorgame.ui.theme.backgroundLight
+
 
 enum class UnitType { Warrior, Knight, Rookie, Lancer, Vampire, Defender, Healer }
 
@@ -38,50 +45,50 @@ data class UnitMeta(
     val title: String,
     val iconRes: Int,
     val backgroundRes: Int,
-    val description: String = ""
+    val description: String = "Some description here..." // TODO: add real descriptions
 )
 
 fun unitMetaOf(type: UnitType): UnitMeta = when (type) {
     UnitType.Warrior -> UnitMeta(
         title = "Warrior",
-        iconRes = R.drawable.ic_launcher_foreground,
-        backgroundRes = R.drawable.ic_launcher_foreground
+        iconRes = R.drawable.ic_warrior_mini,
+        backgroundRes = R.drawable.ic_warrior
     )
 
     UnitType.Knight -> UnitMeta(
         title = "Knight",
-        iconRes = R.drawable.ic_launcher_foreground,
-        backgroundRes = R.drawable.ic_launcher_foreground
+        iconRes = R.drawable.ic_knight_mini,
+        backgroundRes = R.drawable.ic_knight
     )
 
     UnitType.Rookie -> UnitMeta(
         title = "Rookie",
-        iconRes = R.drawable.ic_launcher_foreground,
-        backgroundRes = R.drawable.ic_launcher_foreground
+        iconRes = R.drawable.ic_rookie_mini,
+        backgroundRes = R.drawable.ic_rookie
     )
 
     UnitType.Lancer -> UnitMeta(
         title = "Lancer",
-        iconRes = R.drawable.ic_launcher_foreground,
-        backgroundRes = R.drawable.ic_launcher_foreground
+        iconRes = R.drawable.ic_lancer_mini,
+        backgroundRes = R.drawable.ic_lancer
     )
 
     UnitType.Vampire -> UnitMeta(
         title = "Vampire",
-        iconRes = R.drawable.ic_launcher_foreground,
-        backgroundRes = R.drawable.ic_launcher_foreground
+        iconRes = R.drawable.ic_vampire_mini,
+        backgroundRes = R.drawable.ic_vampire
     )
 
     UnitType.Defender -> UnitMeta(
         title = "Defender",
-        iconRes = R.drawable.ic_launcher_foreground,
-        backgroundRes = R.drawable.ic_launcher_foreground
+        iconRes = R.drawable.ic_warrior_mini,
+        backgroundRes = R.drawable.ic_defender
     )
 
     UnitType.Healer -> UnitMeta(
         title = "Healer",
-        iconRes = R.drawable.ic_launcher_foreground,
-        backgroundRes = R.drawable.ic_launcher_foreground
+        iconRes = R.drawable.ic_healer_mini,
+        backgroundRes = R.drawable.ic_healer
     )
 }
 
@@ -135,6 +142,7 @@ fun statsFor(type: UnitType): List<StatItem> = when (type) {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UnitCard(
     type: UnitType,
@@ -144,42 +152,123 @@ fun UnitCard(
         .height(320.dp)
 ) {
     val meta = unitMetaOf(type)
+
+    var showInfo by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer
         ),
-        elevation = CardDefaults.cardElevation(6.dp)
+        elevation = CardDefaults.cardElevation(6.dp),
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.linearGradient(
+                        listOf(
+                            MaterialTheme.colorScheme.primary.copy(alpha = 1f),
+                            MaterialTheme.colorScheme.tertiary.copy(alpha = .1f)
+                        )
+                    )
+                ),
+
+            ) {
+
             Image(
                 painter = painterResource(meta.backgroundRes),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .matchParentSize()
-                    .alpha(0.35f)
+                    .padding( vertical = 58.dp)
+                    .size(240.dp)
+//                    .matchParentSize()
+                    .alpha(.85f)
             )
 
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(14.dp),
-                verticalArrangement = Arrangement.SpaceBetween
+                    .padding(4.dp),
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = meta.title,
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = meta.title,
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                    IconButton(onClick = { showInfo = true }) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_info_circle),
+                            contentDescription = "Info",
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
+                }
 
                 UnitStatsRow(type)
+            }
+        }
+    }
 
+    if (showInfo) {
+        ModalBottomSheet(
+            onDismissRequest = { showInfo = false },
+            sheetState = sheetState,
+            dragHandle = { BottomSheetDefaults.DragHandle() }
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 16.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Image(
+                        painter = painterResource(meta.iconRes),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(100.dp)
+                            .alpha(.85f)
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    Text(
+                        text = meta.title,
+                        style = MaterialTheme.typography.titleLarge,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                Spacer(Modifier.height(10.dp))
+
+                Text(
+                    text = meta.description,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+
+                Spacer(Modifier.height(16.dp))
             }
         }
     }
