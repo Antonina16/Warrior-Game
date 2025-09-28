@@ -158,7 +158,7 @@ fun UnitCard(
 
     Card(
         modifier = modifier,
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer
         ),
