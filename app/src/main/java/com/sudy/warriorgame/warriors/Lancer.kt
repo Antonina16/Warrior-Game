@@ -8,7 +8,7 @@ import com.sudy.warriorgame.warriors.interfaces.WarriorInArmy
 
 class Lancer : WarriorBase(health = Props.Lancer.HEALTH) {
     override val attack: Int
-        get() = Props.Lancer.ATTACK
+        get() = Props.Lancer.ATTACK + super.attack
 
     override fun hits(other: HasHealth): Int {
         var dealtDamage = super.hits(other)

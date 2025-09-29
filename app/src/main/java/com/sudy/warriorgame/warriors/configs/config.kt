@@ -47,4 +47,9 @@ object Props {
         const val ATTACK = 0
         const val HEAL = 2
     }
+    object Warlord {
+        const val HEALTH = 100
+        const val ATTACK = 3
+        const val DEFENSE = 2
+    }
 }

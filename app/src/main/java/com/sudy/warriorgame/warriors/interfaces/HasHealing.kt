@@ -2,7 +2,7 @@ package com.sudy.warriorgame.warriors.interfaces
 
 
 interface HasHealing {
-    val healing: Int
+    val healPower: Int
     fun heal(other: HasHealth)
 
 }
