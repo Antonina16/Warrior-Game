@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 
 
 
-@Preview(showBackground = true)
+//@Preview(showBackground = true)
 @Composable
 fun ResponsiveLayoutPreview() {
     ResponsiveLayout ()
@@ -26,4 +26,10 @@ fun ResponsiveLayoutPreview() {
 @Composable
 fun UnitCardPreview() {
     UnitCard(UnitType.Warrior)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MiniUnitCardPreview() {
+    MiniUnitCard(UnitType.Warrior)
 }

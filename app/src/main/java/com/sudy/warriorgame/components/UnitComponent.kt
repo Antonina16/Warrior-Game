@@ -29,6 +29,7 @@ import com.sudy.warriorgame.warriors.configs.Props
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.sudy.warriorgame.ui.theme.backgroundLight
 
 
@@ -88,7 +89,7 @@ fun unitMetaOf(type: UnitType): UnitMeta = when (type) {
 
     UnitType.Defender -> UnitMeta(
         title = stringResource(R.string.title_defender),
-        iconRes = R.drawable.ic_warrior_mini,
+        iconRes = R.drawable.ic_defender_mini,
         backgroundRes = R.drawable.ic_defender,
         description = stringResource(R.string.tagline_defender)
     )
@@ -151,19 +152,15 @@ fun statsFor(type: UnitType): List<StatItem> = when (type) {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UnitCard(
     type: UnitType,
     onClick: (Int) -> Unit = {},
     modifier: Modifier = Modifier
-        .width(220.dp)
+        .fillMaxSize()
         .height(320.dp)
 ) {
     val meta = unitMetaOf(type)
-
-    var showInfo by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     Card(
         modifier = modifier,
@@ -187,31 +184,118 @@ fun UnitCard(
 
             ) {
 
-            Image(
-                painter = painterResource(meta.backgroundRes),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .padding( vertical = 58.dp)
-                    .size(240.dp)
-//                    .matchParentSize()
-                    .alpha(.85f)
-            )
 
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(4.dp),
-                verticalArrangement = Arrangement.SpaceBetween,
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.SpaceEvenly,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
+                Text(
+                    text = meta.title,
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontSize = 42.sp,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+                Image(
+                    painter = painterResource(meta.backgroundRes),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .padding(vertical = 58.dp)
+                        .alpha(.85f)
+                )
+
+                Text(
+                    text = meta.description,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    maxLines = 4,
+                    overflow = TextOverflow.Ellipsis
+                )
+                UnitStatsRow(type)
+            }
+        }
+    }
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MiniUnitCard(
+    type: UnitType,
+    onClick: (Int) -> Unit = {},
+    modifier: Modifier = Modifier
+        .width(200.dp)
+        .height(170.dp)
+) {
+    val meta = unitMetaOf(type)
+    var showInfo by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(18.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        ),
+        elevation = CardDefaults.cardElevation(6.dp),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.linearGradient(
+                        listOf(
+                            MaterialTheme.colorScheme.primary.copy(alpha = 1f),
+                            MaterialTheme.colorScheme.tertiary.copy(alpha = .1f)
+                        )
+                    )
+                ),
+            contentAlignment = Alignment.TopEnd
+
+        ) {
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(vertical = 6.dp),
+                verticalArrangement = Arrangement.SpaceEvenly,
+                horizontalAlignment = Alignment.End
+            ) {
+                IconButton(onClick = { showInfo = true }) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_info_circle),
+                        contentDescription = "Info",
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+
                 Row(
                     modifier = Modifier
-                        .padding(horizontal = 8.dp)
+                        .padding(horizontal = 14.dp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Image(
+                        painter = painterResource(meta.iconRes),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .width(58.dp)
+                            .height(58.dp)
+//                      .matchParentSize()
+                            .alpha(.85f)
+                    )
+
                     Text(
                         text = meta.title,
                         style = MaterialTheme.typography.titleLarge.copy(
@@ -222,63 +306,21 @@ fun UnitCard(
                         overflow = TextOverflow.Ellipsis,
                         color = MaterialTheme.colorScheme.onPrimary
                     )
-                    IconButton(onClick = { showInfo = true }) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_info_circle),
-                            contentDescription = "Info",
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.size(22.dp)
-                        )
-                    }
-                }
 
+                }
+                Spacer(Modifier.height(8.dp))
                 UnitStatsRow(type)
             }
+
         }
     }
-
     if (showInfo) {
         ModalBottomSheet(
             onDismissRequest = { showInfo = false },
             sheetState = sheetState,
             dragHandle = { BottomSheetDefaults.DragHandle() }
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 16.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-
-                    Image(
-                        painter = painterResource(meta.iconRes),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(100.dp)
-                            .alpha(.85f)
-                    )
-                    Spacer(Modifier.width(12.dp))
-                    Text(
-                        text = meta.title,
-                        style = MaterialTheme.typography.titleLarge,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-
-                Spacer(Modifier.height(10.dp))
-
-                Text(
-                    text = meta.description,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-
-                Spacer(Modifier.height(16.dp))
-            }
+            UnitCard(type = type)
         }
     }
 }

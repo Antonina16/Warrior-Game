@@ -33,7 +33,7 @@ fun ArmyGrid(
             count = state.size,
             key = { it }
         ) { index ->
-            UnitCard(
+            MiniUnitCard(
                 state[index],
                 onClick = { onClick(index) }
             )
