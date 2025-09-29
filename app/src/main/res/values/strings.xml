@@ -1,3 +1,31 @@
 <resources>
+    <string name="title_warrior">Warrior</string>
+    <string name="title_knight">Knight</string>
+    <string name="title_defender">Defender</string>
+    <string name="title_rookie">Rookie</string>
+    <string name="title_healer">Healer</string>
+    <string name="title_lancer">Lancer</string>
+    <string name="title_vampire">Vampire</string>
+
     <string name="app_name">WarriorGame</string>
+    <!-- Warrior -->
+    <string name="tagline_warrior">I stride into the storm so my allies never have to.</string>
+
+    <!-- Lancer -->
+    <string name="tagline_lancer">Swift as lightning, my spear finds the future first.</string>
+
+    <!-- Healer -->
+    <string name="tagline_healer">When hope falters, my hands stitch the world anew.</string>
+
+    <!-- Vampire -->
+    <string name="tagline_vampire">From velvet night I rise, hunger honed by ambition.</string>
+
+    <!-- Defender -->
+    <string name="tagline_defender">I anchor the line; break on me and break for good.</string>
+
+    <!-- Rookie -->
+    <string name="tagline_rookie">Today I learn the rules; tomorrow I\'ll rewrite them.</string>
+
+    <!-- Knight -->
+    <string name="tagline_knight">A sworn blade in silence; duty first, glory after.</string>
 </resources>

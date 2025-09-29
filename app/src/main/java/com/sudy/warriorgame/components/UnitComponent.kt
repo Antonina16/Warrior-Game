@@ -28,6 +28,7 @@ import com.sudy.warriorgame.ui.theme.surfaceContainerLight
 import com.sudy.warriorgame.warriors.configs.Props
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.stringResource
 import com.sudy.warriorgame.ui.theme.backgroundLight
 
 
@@ -48,47 +49,55 @@ data class UnitMeta(
     val description: String = "Some description here..." // TODO: add real descriptions
 )
 
+@Composable
 fun unitMetaOf(type: UnitType): UnitMeta = when (type) {
     UnitType.Warrior -> UnitMeta(
-        title = "Warrior",
+        title = stringResource(R.string.title_warrior),
         iconRes = R.drawable.ic_warrior_mini,
-        backgroundRes = R.drawable.ic_warrior
+        backgroundRes = R.drawable.ic_warrior,
+        description = stringResource(R.string.tagline_warrior)
     )
 
     UnitType.Knight -> UnitMeta(
-        title = "Knight",
+        title = stringResource(R.string.title_knight),
         iconRes = R.drawable.ic_knight_mini,
-        backgroundRes = R.drawable.ic_knight
+        backgroundRes = R.drawable.ic_knight,
+        description = stringResource(R.string.tagline_knight)
     )
 
     UnitType.Rookie -> UnitMeta(
-        title = "Rookie",
+        title = stringResource(R.string.title_rookie),
         iconRes = R.drawable.ic_rookie_mini,
-        backgroundRes = R.drawable.ic_rookie
+        backgroundRes = R.drawable.ic_rookie,
+        description = stringResource(R.string.tagline_rookie)
     )
 
     UnitType.Lancer -> UnitMeta(
-        title = "Lancer",
+        title = stringResource(R.string.title_lancer),
         iconRes = R.drawable.ic_lancer_mini,
-        backgroundRes = R.drawable.ic_lancer
+        backgroundRes = R.drawable.ic_lancer,
+        description = stringResource(R.string.tagline_lancer)
     )
 
     UnitType.Vampire -> UnitMeta(
-        title = "Vampire",
+        title = stringResource(R.string.title_vampire),
         iconRes = R.drawable.ic_vampire_mini,
-        backgroundRes = R.drawable.ic_vampire
+        backgroundRes = R.drawable.ic_vampire,
+        description = stringResource(R.string.tagline_vampire)
     )
 
     UnitType.Defender -> UnitMeta(
-        title = "Defender",
+        title = stringResource(R.string.title_defender),
         iconRes = R.drawable.ic_warrior_mini,
-        backgroundRes = R.drawable.ic_defender
+        backgroundRes = R.drawable.ic_defender,
+        description = stringResource(R.string.tagline_defender)
     )
 
     UnitType.Healer -> UnitMeta(
-        title = "Healer",
+        title = stringResource(R.string.title_healer),
         iconRes = R.drawable.ic_healer_mini,
-        backgroundRes = R.drawable.ic_healer
+        backgroundRes = R.drawable.ic_healer,
+        description = stringResource(R.string.tagline_healer)
     )
 }
 
