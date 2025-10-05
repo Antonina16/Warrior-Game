@@ -5,9 +5,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -31,7 +36,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.sudy.warriorgame.ui.theme.backgroundLight
+import com.sudy.warriorgame.warriors.configs.DIM
+import kotlinx.coroutines.launch
 
+const val MINI_UNIT_WIDTH = 200
+const val MINI_UNIT_HEIGHT = 150
+const val CHIPS_WIDTH = 175
 
 enum class UnitType { Warrior, Knight, Rookie, Lancer, Vampire, Defender, Healer }
 
@@ -155,7 +165,7 @@ fun statsFor(type: UnitType): List<StatItem> = when (type) {
 @Composable
 fun UnitCard(
     type: UnitType,
-    onClick: (Int) -> Unit = {},
+    onDelete: () -> Unit = {},
     modifier: Modifier = Modifier
         .fillMaxSize()
         .height(320.dp)
@@ -181,8 +191,9 @@ fun UnitCard(
                         )
                     )
                 ),
+            contentAlignment = Alignment.TopEnd
 
-            ) {
+        ) {
 
 
             Column(
@@ -208,7 +219,8 @@ fun UnitCard(
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .padding(vertical = 58.dp)
+                        .width(400.dp)
+                        .height(350.dp)
                         .alpha(.85f)
                 )
 
@@ -219,7 +231,20 @@ fun UnitCard(
                     maxLines = 4,
                     overflow = TextOverflow.Ellipsis
                 )
-                UnitStatsRow(type)
+                UnitStatsGrid(type)
+            }
+
+            IconButton(
+                modifier = Modifier
+                    .padding(8.dp),
+                onClick = onDelete,
+            ) {
+                Icon(
+                    Icons.Outlined.Delete,
+                    contentDescription = "delete",
+                    modifier = Modifier.size(32.dp),
+                    tint = MaterialTheme.colorScheme.tertiary
+                )
             }
         }
     }
@@ -230,14 +255,15 @@ fun UnitCard(
 @Composable
 fun MiniUnitCard(
     type: UnitType,
-    onClick: (Int) -> Unit = {},
+    onDelete: () -> Unit = {},
     modifier: Modifier = Modifier
-        .width(200.dp)
-        .height(170.dp)
+        .width(MINI_UNIT_WIDTH.dp)
+        .height(MINI_UNIT_HEIGHT.dp)
 ) {
     val meta = unitMetaOf(type)
     var showInfo by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val scope = rememberCoroutineScope()
 
     Card(
         modifier = modifier,
@@ -246,6 +272,7 @@ fun MiniUnitCard(
             containerColor = MaterialTheme.colorScheme.surfaceContainer
         ),
         elevation = CardDefaults.cardElevation(6.dp),
+        onClick = { showInfo = true }
     ) {
         Box(
             modifier = Modifier
@@ -265,22 +292,12 @@ fun MiniUnitCard(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(vertical = 6.dp),
-                verticalArrangement = Arrangement.SpaceEvenly,
-                horizontalAlignment = Alignment.End
+                    .padding(vertical = 6.dp, horizontal = 6.dp),
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                IconButton(onClick = { showInfo = true }) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_info_circle),
-                        contentDescription = "Info",
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(22.dp)
-                    )
-                }
-
                 Row(
                     modifier = Modifier
-                        .padding(horizontal = 14.dp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
@@ -290,12 +307,10 @@ fun MiniUnitCard(
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .width(58.dp)
-                            .height(58.dp)
-//                      .matchParentSize()
-                            .alpha(.85f)
-                    )
+                            .width(100.dp)
+                            .height(100.dp)
 
+                    )
                     Text(
                         text = meta.title,
                         style = MaterialTheme.typography.titleLarge.copy(
@@ -308,9 +323,10 @@ fun MiniUnitCard(
                     )
 
                 }
-                Spacer(Modifier.height(8.dp))
+
                 UnitStatsRow(type)
             }
+
 
         }
     }
@@ -320,7 +336,16 @@ fun MiniUnitCard(
             sheetState = sheetState,
             dragHandle = { BottomSheetDefaults.DragHandle() }
         ) {
-            UnitCard(type = type)
+            UnitCard(
+                type = type,
+                onDelete = {
+                    scope.launch {
+                        sheetState.hide()
+                        showInfo = false
+                        onDelete()
+                    }
+                }
+            )
         }
     }
 }
@@ -333,12 +358,11 @@ private fun StatChip(
 ) {
 
     Surface(
-        modifier = modifier,
+        modifier = modifier.width(CHIPS_WIDTH.dp),
         shape = RoundedCornerShape(12.dp),
         color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.1f),
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -378,3 +402,26 @@ private fun UnitStatsRow(
     }
 }
 
+@Composable
+private fun UnitStatsGrid(
+    type: UnitType,
+) {
+    val all = statsFor(type)
+    val gridState = rememberLazyGridState()
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(DIM),
+        state = gridState,
+        modifier = Modifier,
+        contentPadding = PaddingValues(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        items(
+            count = all.size,
+            key = { it }) { index ->
+            StatChip(
+                item = all[index],
+            )
+        }
+    }
+}

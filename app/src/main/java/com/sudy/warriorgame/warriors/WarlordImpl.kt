@@ -1,5 +1,7 @@
 package com.sudy.warriorgame.warriors
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.sudy.warriorgame.warriors.configs.Props
 import com.sudy.warriorgame.warriors.interfaces.ExtraProps
 import com.sudy.warriorgame.warriors.interfaces.HasDefense
@@ -7,16 +9,41 @@ import com.sudy.warriorgame.warriors.interfaces.Warlord
 import com.sudy.warriorgame.warriors.interfaces.Warrior
 
 
-class WarlordImpl :  WarriorBase(health = Props.Warlord.HEALTH), HasDefense, Warlord {
+class WarlordImpl : WarriorBase(
+    health = Props.Warlord.HEALTH
+), HasDefense, Warlord {
     override val attack: Int
-    get() = Props.Warlord.ATTACK + super.attack
+        get() = Props.Defender.ATTACK + super.attack
 
     override val defense: Int
-    get() = Props.Warlord.DEFENSE +
-            extraModifiers[ExtraProps.DEFENSE]!!
+        get() = Props.Defender.DEFENSE +
+                extraModifiers[ExtraProps.DEFENSE]!!
 
-    override fun moveUnits(units: List<Warrior>): List<Warrior> {
-        TODO("Not yet implemented")
+    override fun takeDamage(damage: Int) {
+        val reducedDamage = (damage - defense).coerceAtLeast(0)
+        super.takeDamage(reducedDamage)
     }
 
+    @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+    override fun moveUnits(units: List<Warrior>): List<Warrior> {
+        val reordered = mutableListOf<Warrior>()
+
+        fun isOtherCombatUnit(it: Warrior) =
+            it !is Lancer && it !is Healer && it !is Warlord
+
+        val lancers = units.filter { it is Lancer }.toMutableList()
+        val healers = units.filter { it is Healer }
+        val others = units.filter(::isOtherCombatUnit).toMutableList()
+
+        if (lancers.isNotEmpty()) {
+            reordered.add(lancers.removeFirst())
+        } else if (others.isNotEmpty()) {
+            reordered.add(others.removeFirst())
+        }
+        reordered.addAll(healers)
+        reordered.addAll(lancers)
+        reordered.addAll(others)
+        reordered.add(this)
+        return reordered
+    }
 }

@@ -24,13 +24,13 @@ fun ResponsiveLayout(modifier: Modifier = Modifier) =
 
 @Composable
 fun PortraitLayout(modifier: Modifier = Modifier) {
-    Column (
+    Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Top
     ) {
-        ArmyGrid(
-        )
+
+        ArmyGrid()
     }
 }
 
@@ -38,11 +38,8 @@ fun PortraitLayout(modifier: Modifier = Modifier) {
 fun LandscapeLayout(modifier: Modifier = Modifier) {
     Row(
         modifier = modifier.fillMaxSize(),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.Top
     ) {
-        ArmyGrid(
-        )
-
+            ArmyGrid()
     }
 }

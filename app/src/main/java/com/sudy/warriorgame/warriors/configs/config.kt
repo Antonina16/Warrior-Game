@@ -6,6 +6,7 @@ typealias Cartage = List<UnitType>
 
 const val DIM = 2
 
+
 val cartage = listOf(
     UnitType.Warrior, UnitType.Vampire,
     UnitType.Defender, UnitType.Healer, UnitType.Lancer, UnitType.Rookie,
