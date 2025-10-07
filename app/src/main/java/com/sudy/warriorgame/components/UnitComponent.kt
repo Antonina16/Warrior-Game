@@ -32,6 +32,7 @@ import com.sudy.warriorgame.ui.theme.primaryContainerLight
 import com.sudy.warriorgame.ui.theme.surfaceContainerLight
 import com.sudy.warriorgame.warriors.configs.Props
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -261,9 +262,10 @@ fun MiniUnitCard(
         .height(MINI_UNIT_HEIGHT.dp)
 ) {
     val meta = unitMetaOf(type)
-    var showInfo by remember { mutableStateOf(false) }
+    var showInfo by rememberSaveable { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
+
 
     Card(
         modifier = modifier,
@@ -292,8 +294,8 @@ fun MiniUnitCard(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(vertical = 6.dp, horizontal = 6.dp),
-                verticalArrangement = Arrangement.SpaceBetween,
+                    .padding(top= 38.dp, start=6.dp, end=12.dp, bottom=6.dp),
+                verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row(
@@ -307,8 +309,8 @@ fun MiniUnitCard(
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .width(100.dp)
-                            .height(100.dp)
+                            .width(80.dp)
+                            .height(80.dp)
 
                     )
                     Text(
@@ -326,7 +328,18 @@ fun MiniUnitCard(
 
                 UnitStatsRow(type)
             }
-
+            IconButton(
+                modifier = Modifier
+                    .padding(bottom = 6.dp, end = 6.dp),
+                onClick = onDelete,
+            ) {
+                Icon(
+                    Icons.Outlined.Delete,
+                    contentDescription = "delete",
+                    modifier = Modifier.size(32.dp),
+                    tint = MaterialTheme.colorScheme.tertiary
+                )
+            }
 
         }
     }
@@ -338,13 +351,14 @@ fun MiniUnitCard(
         ) {
             UnitCard(
                 type = type,
-                onDelete = {
-                    scope.launch {
-                        sheetState.hide()
-                        showInfo = false
-                        onDelete()
+                onDelete =
+                    {
+                        scope.launch {
+                            sheetState.hide()
+                            showInfo = false
+                            onDelete()
+                        }
                     }
-                }
             )
         }
     }
@@ -359,7 +373,7 @@ private fun StatChip(
 
     Surface(
         modifier = modifier.width(CHIPS_WIDTH.dp),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(8.dp),
         color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.1f),
     ) {
         Row(
@@ -425,3 +439,5 @@ private fun UnitStatsGrid(
         }
     }
 }
+
+
