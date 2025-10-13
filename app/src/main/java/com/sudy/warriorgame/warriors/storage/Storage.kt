@@ -11,6 +11,17 @@ interface StorageService {
     fun read(): List<UnitType>
 }
 
+class InMemoryStorageService : StorageService {
+    private var items = emptyList<UnitType>()
+    override fun write(items: List<UnitType>) {
+        this.items = items
+    }
+
+    override fun read(): List<UnitType> {
+        return items
+    }
+}
+
 class FileStorageService(
     private val context: Context
 ) : StorageService {
