@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import com.sudy.warriorgame.components.FILE_NAME
 import com.sudy.warriorgame.components.UnitType
 import com.sudy.warriorgame.warriors.configs.DIM
+import com.sudy.warriorgame.warriors.storage.StorageService
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 
@@ -28,30 +29,12 @@ sealed interface UnitListEvent {
 
 }
 
-fun writeData(items: List<UnitType>, context: Context) {
-    context.openFileOutput(FILE_NAME, Context.MODE_PRIVATE).use {
-        val oos = ObjectOutputStream(it)
-        oos.writeObject(
-            ArrayList<UnitType>(items)
-        )
-    }
-}
-
-fun readData(context: Context): List<UnitType> {
-    try {
-        @Suppress("UNCHECKED_CAST")
-        return ObjectInputStream(context.openFileInput(FILE_NAME))
-            .readObject() as ArrayList<UnitType>
-    } catch (e: Exception) {
-        return emptyList()
-    }
-}
 
 class UnitListViewModel(
-    private val context: Context
+    private val storageService: StorageService
 ) : ViewModel() {
     private val _itemList =
-        mutableStateListOf(*readData(context = context).toTypedArray())
+        mutableStateListOf(*storageService.read().toTypedArray())
     val itemList: List<UnitType> get() = _itemList
 
     var isConfirmDialogOpen by mutableStateOf(false)
@@ -86,7 +69,7 @@ class UnitListViewModel(
             else -> run {  //return last expression in block code
                 _itemList.removeAt(itemToBeDeleted)
                 itemToBeDeleted = -1
-                writeData(context = context, items = itemList)
+                storageService.write( items = itemList)
             }
 
         }
@@ -95,7 +78,7 @@ class UnitListViewModel(
 
     fun add(type: UnitType) {
         _itemList.add(type)
-        writeData(context = context, items = itemList)
+        storageService.write( items = itemList)
         println("devcpp itemList.size = ${itemList.size}")
     }
 
