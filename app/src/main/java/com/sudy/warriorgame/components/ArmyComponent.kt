@@ -62,7 +62,7 @@ fun readData(context: Context): List<UnitType> {
 
 @Composable
 fun ArmyGrid(
-    vm: UnitListViewModel = viewModel()
+    vm: UnitListViewModel
 ) {
 //    val context = LocalContext.current
 //    val itemList = remember {

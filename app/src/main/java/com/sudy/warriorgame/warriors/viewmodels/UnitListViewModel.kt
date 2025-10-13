@@ -9,6 +9,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.sudy.warriorgame.components.UnitType
 import com.sudy.warriorgame.warriors.configs.DIM
+import com.sudy.warriorgame.warriors.storage.StorageService
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 
 typealias Callback = (UnitListEvent) -> Unit
@@ -24,9 +27,12 @@ sealed interface UnitListEvent {
 
 }
 
-class UnitListViewModel : ViewModel() {
-    private val _itemList =
-        mutableStateListOf(UnitType.Warrior, UnitType.Lancer, UnitType.Vampire, UnitType.Knight)
+@HiltViewModel
+class UnitListViewModel @Inject constructor(
+    private val storageService: StorageService
+) : ViewModel() {
+    private val _itemList = mutableStateListOf<UnitType>(
+        *storageService.read().toTypedArray())
     val itemList: List<UnitType> get() = _itemList
 
     var isConfirmDialogOpen by mutableStateOf(false)
@@ -61,6 +67,7 @@ class UnitListViewModel : ViewModel() {
             else -> run {  //return last expression in block code
                 _itemList.removeAt(itemToBeDeleted)
                 itemToBeDeleted = -1
+                storageService.write(itemList)
             }
 
         }
@@ -70,6 +77,7 @@ class UnitListViewModel : ViewModel() {
     fun add(type: UnitType) {
         _itemList.add(type)
         println("devcpp itemList.size = ${itemList.size}")
+        storageService.write(itemList)
     }
 
     fun ix(iRow: Int, iCol: Int) = iRow * DIM + iCol

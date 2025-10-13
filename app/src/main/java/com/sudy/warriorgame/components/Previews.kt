@@ -17,10 +17,10 @@ import androidx.compose.ui.unit.dp
 
 
 //@Preview(showBackground = true)
-@Composable
-fun ResponsiveLayoutPreview() {
-    ResponsiveLayout ()
-}
+//@Composable
+//fun ResponsiveLayoutPreview() {
+//    ResponsiveLayout ()
+//}
 
 //@Preview(showBackground = true)
 @Composable
