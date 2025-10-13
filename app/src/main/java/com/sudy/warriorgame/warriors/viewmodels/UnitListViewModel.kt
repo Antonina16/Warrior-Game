@@ -1,5 +1,6 @@
 package com.sudy.warriorgame.warriors.viewmodels
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -7,8 +8,11 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.sudy.warriorgame.components.FILE_NAME
 import com.sudy.warriorgame.components.UnitType
 import com.sudy.warriorgame.warriors.configs.DIM
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
 
 
 typealias Callback = (UnitListEvent) -> Unit
@@ -24,9 +28,30 @@ sealed interface UnitListEvent {
 
 }
 
-class UnitListViewModel : ViewModel() {
+fun writeData(items: List<UnitType>, context: Context) {
+    context.openFileOutput(FILE_NAME, Context.MODE_PRIVATE).use {
+        val oos = ObjectOutputStream(it)
+        oos.writeObject(
+            ArrayList<UnitType>(items)
+        )
+    }
+}
+
+fun readData(context: Context): List<UnitType> {
+    try {
+        @Suppress("UNCHECKED_CAST")
+        return ObjectInputStream(context.openFileInput(FILE_NAME))
+            .readObject() as ArrayList<UnitType>
+    } catch (e: Exception) {
+        return emptyList()
+    }
+}
+
+class UnitListViewModel(
+    private val context: Context
+) : ViewModel() {
     private val _itemList =
-        mutableStateListOf(UnitType.Warrior, UnitType.Lancer, UnitType.Vampire, UnitType.Knight)
+        mutableStateListOf(*readData(context = context).toTypedArray())
     val itemList: List<UnitType> get() = _itemList
 
     var isConfirmDialogOpen by mutableStateOf(false)
@@ -61,6 +86,7 @@ class UnitListViewModel : ViewModel() {
             else -> run {  //return last expression in block code
                 _itemList.removeAt(itemToBeDeleted)
                 itemToBeDeleted = -1
+                writeData(context = context, items = itemList)
             }
 
         }
@@ -69,6 +95,7 @@ class UnitListViewModel : ViewModel() {
 
     fun add(type: UnitType) {
         _itemList.add(type)
+        writeData(context = context, items = itemList)
         println("devcpp itemList.size = ${itemList.size}")
     }
 

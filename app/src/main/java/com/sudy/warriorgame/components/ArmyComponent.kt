@@ -1,7 +1,5 @@
 package com.sudy.warriorgame.components
 
-import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,14 +16,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -35,83 +25,18 @@ import com.sudy.warriorgame.warriors.configs.DIM
 import com.sudy.warriorgame.warriors.viewmodels.Callback
 import com.sudy.warriorgame.warriors.viewmodels.UnitListEvent
 import com.sudy.warriorgame.warriors.viewmodels.UnitListViewModel
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
+import com.sudy.warriorgame.warriors.viewmodels.UnitListViewModelFactory
 
 
 const val FILE_NAME = "cardlist.dat"
 
-fun writeData(items: List<UnitType>, context: Context) {
-    context.openFileOutput(FILE_NAME, Context.MODE_PRIVATE).use {
-        val oos = ObjectOutputStream(it)
-        oos.writeObject(
-            ArrayList<UnitType>(items)
-        )
-    }
-}
 
-fun readData(context: Context): List<UnitType> {
-    try {
-        @Suppress("UNCHECKED_CAST")
-        return ObjectInputStream(context.openFileInput(FILE_NAME))
-            .readObject() as ArrayList<UnitType>
-    } catch (e: Exception) {
-        return emptyList()
-    }
-}
 
 @Composable
 fun ArmyGrid(
-    vm: UnitListViewModel = viewModel()
+    vm: UnitListViewModel = viewModel(factory = UnitListViewModelFactory(context = LocalContext.current))
 ) {
-//    val context = LocalContext.current
-//    val itemList = remember {
-//        mutableStateListOf(
-//            *readData(context).toTypedArray()
-//        )
-//    }
-//
-//    var isConfirmDialogOpen by rememberSaveable { mutableStateOf(false) }
-//    var itemToBeDeleted by remember { mutableIntStateOf(-1) }
-
     val gridState = rememberLazyGridState()
-
-//    LaunchedEffect(itemList.size) { writeData(itemList, context) }
-
-
-//    @Composable
-//    fun updateData() {
-//        writeData(itemList, context)
-//    }
-//    updateData()
-
-//    fun deleteAt(ix: Int) {
-//        itemList.removeAt(ix)
-//    }
-
-//    fun deleteSelected(confirmed: Boolean) {
-//        when {
-//            !confirmed ->
-//                itemToBeDeleted = -1
-//
-//            itemToBeDeleted !in itemList.indices ->
-//                Log.wtf("List", "itemToBeDeleted out of bounds")
-//
-//            else -> run {  //return last expression in block code
-//                itemList.removeAt(itemToBeDeleted)
-//                itemToBeDeleted = -1
-//            }
-//
-//        }
-//        isConfirmDialogOpen = false
-//    }
-//
-//    fun add(type: UnitType) {
-//        itemList.add(type)
-//        println("devcpp itemList.size = ${itemList.size}")
-//    }
-//
-//    fun ix(iRow: Int, iCol: Int) = iRow * DIM + iCol
     Box() {
         Column(
             modifier = Modifier
