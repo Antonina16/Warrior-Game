@@ -26,6 +26,7 @@ import com.sudy.warriorgame.warriors.viewmodels.Callback
 import com.sudy.warriorgame.warriors.viewmodels.UnitListEvent
 import com.sudy.warriorgame.warriors.viewmodels.UnitListViewModel
 import com.sudy.warriorgame.warriors.viewmodels.UnitListViewModelFactory
+import org.koin.androidx.compose.koinViewModel
 
 
 const val FILE_NAME = "cardlist.dat"
@@ -34,7 +35,7 @@ const val FILE_NAME = "cardlist.dat"
 
 @Composable
 fun ArmyGrid(
-    vm: UnitListViewModel = viewModel(factory = UnitListViewModelFactory(context = LocalContext.current))
+    vm: UnitListViewModel = koinViewModel()
 ) {
     val gridState = rememberLazyGridState()
     Box() {

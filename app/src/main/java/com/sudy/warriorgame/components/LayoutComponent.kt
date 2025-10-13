@@ -9,13 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import com.sudy.warriorgame.warriors.viewmodels.UnitListViewModel
 
 
 @Composable
 fun ResponsiveLayout(modifier: Modifier = Modifier) =
     when (LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_PORTRAIT -> PortraitLayout(
-            modifier = modifier,
+            modifier = modifier
         )
 
         else -> LandscapeLayout(modifier = modifier)
