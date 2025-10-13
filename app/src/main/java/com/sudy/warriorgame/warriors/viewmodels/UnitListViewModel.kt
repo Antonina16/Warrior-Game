@@ -10,6 +10,20 @@ import androidx.lifecycle.ViewModel
 import com.sudy.warriorgame.components.UnitType
 import com.sudy.warriorgame.warriors.configs.DIM
 
+
+typealias Callback = (UnitListEvent) -> Unit
+
+sealed interface UnitListEvent {
+    data class OpenDeleteConfirmationDialog(val ix: Int) : UnitListEvent
+    data object CancelDelete : UnitListEvent
+    data object ConfirmDelete : UnitListEvent
+    data class Add(val type: UnitType) : UnitListEvent
+    data class OpenEditeDialog(val ix: Int) : UnitListEvent
+    data object CancelEdite : UnitListEvent
+    data object SubmitEdite : UnitListEvent
+
+}
+
 class UnitListViewModel : ViewModel() {
     private val _itemList =
         mutableStateListOf(UnitType.Warrior, UnitType.Lancer, UnitType.Vampire, UnitType.Knight)
@@ -20,9 +34,20 @@ class UnitListViewModel : ViewModel() {
     var itemToBeDeleted by mutableIntStateOf(-1)
         private set
 
-    val itemToBeDeletedName: String get(){
-        if(itemToBeDeleted !in itemList.indices) return ""
-       return _itemList[itemToBeDeleted].name
+    val itemToBeDeletedName: String
+        get() {
+            if (itemToBeDeleted !in itemList.indices) return ""
+            return _itemList[itemToBeDeleted].name
+        }
+
+    fun onEvent(event: UnitListEvent) {
+        when (event) {
+            is UnitListEvent.OpenDeleteConfirmationDialog -> delete(event.ix)
+            is UnitListEvent.CancelDelete -> deleteSelected(confirmed = false)
+            is UnitListEvent.ConfirmDelete -> deleteSelected(confirmed = true)
+            is UnitListEvent.Add -> add(event.type)
+            else -> {}
+        }
     }
 
     fun deleteSelected(confirmed: Boolean) {

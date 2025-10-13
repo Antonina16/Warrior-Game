@@ -32,6 +32,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sudy.warriorgame.warriors.configs.DIM
+import com.sudy.warriorgame.warriors.viewmodels.Callback
+import com.sudy.warriorgame.warriors.viewmodels.UnitListEvent
 import com.sudy.warriorgame.warriors.viewmodels.UnitListViewModel
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
@@ -116,7 +118,7 @@ fun ArmyGrid(
                 .align(Alignment.Center)
                 .fillMaxSize()
         ) {
-            UnitDropDownComponent(onCreate = vm::add)
+            UnitDropDownComponent(onEvent = vm::onEvent)
             LazyVerticalGrid(
                 columns = GridCells.Fixed(DIM),
                 state = gridState,
@@ -131,7 +133,8 @@ fun ArmyGrid(
                 ) { index ->
                     MiniUnitCard(
                         type = vm.itemList[index],
-                        onDelete = { vm.delete(index) }
+                        ix = index,
+                        vm::onEvent
                     )
                 }
             }
@@ -139,7 +142,7 @@ fun ArmyGrid(
         if (vm.isConfirmDialogOpen) {
             DeleteConfirmDialog(
                 modifier = Modifier.align(Alignment.Center),
-                callback = vm::deleteSelected,
+                callback = vm::onEvent,
                 itemText = vm.itemToBeDeletedName
             )
         }
@@ -149,7 +152,7 @@ fun ArmyGrid(
 
 @Composable
 fun DeleteConfirmDialog(
-    callback: (Boolean) -> Unit,
+    callback: Callback = {},
     itemText: String,
     title: String = "Are you sure?",
     text: String = "{type} will be permanently deleted.",
@@ -159,7 +162,7 @@ fun DeleteConfirmDialog(
 ) {
     AlertDialog(
         modifier = modifier,
-        onDismissRequest = { callback(false) },
+        onDismissRequest = { callback(UnitListEvent.CancelDelete) },
         icon = {
             Icon(
                 Icons.Filled.Warning, contentDescription = null,
@@ -174,14 +177,14 @@ fun DeleteConfirmDialog(
         },
         confirmButton = {
             TextButton(
-                onClick = { callback(true) }
+                onClick = { callback(UnitListEvent.ConfirmDelete) }
             ) {
                 Text(confirmText)
             }
         },
         dismissButton = {
             TextButton(
-                onClick = { callback(false) }
+                onClick = { callback(UnitListEvent.CancelDelete) }
             ) {
                 Text(dismissText)
             }

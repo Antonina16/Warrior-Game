@@ -42,6 +42,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.IconButton
+import com.sudy.warriorgame.warriors.viewmodels.Callback
+import com.sudy.warriorgame.warriors.viewmodels.UnitListEvent
 
 
 @Preview(showBackground = true, showSystemUi = false)
@@ -57,7 +59,7 @@ fun UnitDropDownPreview() {
 }
 
 @Composable
-fun UnitDropDownComponent(onCreate: (UnitType) -> Unit ) {
+fun UnitDropDownComponent(onEvent: Callback = {}) {
     var expanded by remember { mutableStateOf(false) }
     var selected by remember { mutableStateOf<UnitType>(cartage[0]) }
 
@@ -105,7 +107,7 @@ fun UnitDropDownComponent(onCreate: (UnitType) -> Unit ) {
                 }
             }
             IconButton(
-                onClick = { onCreate(selected) }
+                onClick = { onEvent(UnitListEvent.Add(selected)) }
             ) {
                 Icon(
                     Icons.Filled.Add,

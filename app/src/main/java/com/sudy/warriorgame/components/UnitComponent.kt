@@ -38,6 +38,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.sudy.warriorgame.ui.theme.backgroundLight
 import com.sudy.warriorgame.warriors.configs.DIM
+import com.sudy.warriorgame.warriors.viewmodels.Callback
+import com.sudy.warriorgame.warriors.viewmodels.UnitListEvent
 import kotlinx.coroutines.launch
 
 const val MINI_UNIT_WIDTH = 200
@@ -256,7 +258,8 @@ fun UnitCard(
 @Composable
 fun MiniUnitCard(
     type: UnitType,
-    onDelete: () -> Unit = {},
+    ix: Int,
+    onEvent: Callback = {},
     modifier: Modifier = Modifier
         .width(MINI_UNIT_WIDTH.dp)
         .height(MINI_UNIT_HEIGHT.dp)
@@ -331,7 +334,7 @@ fun MiniUnitCard(
             IconButton(
                 modifier = Modifier
                     .padding(bottom = 6.dp, end = 6.dp),
-                onClick = onDelete,
+                onClick = {onEvent(UnitListEvent.OpenDeleteConfirmationDialog(ix))},
             ) {
                 Icon(
                     Icons.Outlined.Delete,
@@ -356,7 +359,7 @@ fun MiniUnitCard(
                         scope.launch {
                             sheetState.hide()
                             showInfo = false
-                            onDelete()
+                            onEvent(UnitListEvent.OpenDeleteConfirmationDialog(ix))
                         }
                     }
             )

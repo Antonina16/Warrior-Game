@@ -31,5 +31,5 @@ fun UnitCardPreview() {
 @Preview(showBackground = true)
 @Composable
 fun MiniUnitCardPreview() {
-    MiniUnitCard(UnitType.Warrior)
+    MiniUnitCard(UnitType.Warrior, 0)
 }
